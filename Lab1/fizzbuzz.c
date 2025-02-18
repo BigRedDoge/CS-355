@@ -6,6 +6,7 @@ CS 355
 
 void int_input(int* integer);
 void fizzbuzz(int integer);
+int abs(int integer);
 
 int main() {
     int integer_input;
@@ -23,8 +24,12 @@ int main() {
 Execute fizzbuzz
 */
 void fizzbuzz(int integer) {
+    int integer_abs = abs(integer);
+
+    int negative = integer < 0;
+
     // loop from 0 to inputted integer
-    for (int i = 0; i <= integer; i++) {
+    for (int i = 0; i <= integer_abs; i++) {
         if (i % 3 == 0 && i % 5 == 0) {
             // if i is divisible by both 3 and 5
             printf("FizzBuzz\n");
@@ -36,7 +41,11 @@ void fizzbuzz(int integer) {
             printf("Buzz\n");
         } else {
             // if i is not divisible by 3 and 5
-            printf("%d\n", i);
+            if (negative) {
+                printf("%d\n", -i);
+            } else {
+                printf("%d\n", i);
+            }
         }
     }
 }
@@ -47,4 +56,15 @@ Get integer input from user
 void int_input(int* integer) {
     printf("Please enter an integer: ");
     scanf("%d", integer);
+}
+
+/*
+Get absolute value of integer
+*/
+int abs(int integer) {
+    if (integer < 0) {
+        return -integer;
+    } else {
+        return integer;
+    }
 }
