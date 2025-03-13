@@ -8,12 +8,15 @@ int main(int argc, char *argv[]) {
         char *argPtr = argv[i];
         int argLen = 1;
         // loop through all characters in current argument
-        while (*argPtr != 0) {
+        while (*argPtr != '\0') {
             // if character is a letter aA-zZ based on ascii code
-            if ((*argPtr >= 'a' && *argPtr <= 'z') || (*argPtr >= 'A' && *argPtr <= 'Z')) {
+            if ((*argPtr >= 'a' && *argPtr <= 'z') || (*argPtr >= 'A' && *argPtr <= 'Z') && !(*argPtr >= 0 && *argPtr <= 9)) {
                 // print out each character of current argument up to current character
                 for (int j = argLen - 1; j >= 0; j--) {
-                    printf("%c", *(argPtr - j));
+                    // if character is a letter aA-zZ based on ascii code
+                    if ((*(argPtr - j) >= 'a' && *(argPtr - j) <= 'z') || (*(argPtr - j) >= 'A' && *(argPtr - j) <= 'Z') && !(*(argPtr - j) >= 0 && *(argPtr - j) <= 9)) {
+                        printf("%c", *(argPtr - j));
+                    }
                 }
                 printf("\n");
             }
