@@ -18,6 +18,9 @@ int main(int argc, char *argv[]) {
     if(argc==2)
         speed=atoi(argv[1]);  // convert a char* to an int
     initscr();              // initialize the curses library
+    nodelay(stdscr, TRUE);  // do not wait for input when getch() is called
+    keypad(stdscr, TRUE);   // enable special keys (arrow keys)
+    noecho();               // do not echo input to the screen
     clear();                // clear the screen
 
     struct snake snake = initializeSnake(speed);
@@ -64,27 +67,31 @@ void playSnake(struct snake snake, int speed) {
                 newMoveX = snake.body[0].x - 1;
                 newMoveY = snake.body[0].y;
                 snake.direction = 0;
-                moveSnake(&snake, newMoveX, newMoveY);                
+                //moveSnake(&snake, newMoveX, newMoveY);   
+                break;             
             case 'a':
             case KEY_LEFT: 
                 newMoveX = snake.body[0].x;
                 newMoveY = snake.body[0].y - 1;
                 snake.direction = 3;
-                moveSnake(&snake, newMoveX, newMoveY);
+                //moveSnake(&snake, newMoveX, newMoveY);
+                break;
             case 's':
             case KEY_DOWN:
                 newMoveX = snake.body[0].x + 1;
                 newMoveY = snake.body[0].y;
                 snake.direction = 2;
-                moveSnake(&snake, newMoveX, newMoveY);
+                //moveSnake(&snake, newMoveX, newMoveY);
+                break;
             case 'd':
             case KEY_RIGHT:
                 newMoveX = snake.body[0].x;
                 newMoveY = snake.body[0].y + 1;
                 snake.direction = 1;
-                moveSnake(&snake, newMoveX, newMoveY);
-            case 'q':
+                //moveSnake(&snake, newMoveX, newMoveY);
                 break;
+            case 'q':
+                return;
             default:
                 if (snake.direction == 0) {
                     newMoveX = snake.body[0].x - 1;
@@ -99,11 +106,11 @@ void playSnake(struct snake snake, int speed) {
                     newMoveX = snake.body[0].x;
                     newMoveY = snake.body[0].y - 1;
                 }
-                moveSnake(&snake, newMoveX, newMoveY);
         }
+        moveSnake(&snake, newMoveX, newMoveY);
 
-        if (!checkAlive(snake))
-            break;
+        //if (!checkAlive(snake))
+        //    break;
 
         checkIfEatFood(&snake, &food);
 

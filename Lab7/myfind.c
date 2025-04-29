@@ -2,6 +2,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <unistd.h>
 
 void do_find(char *dir_name, char *filename, int indent);
 
@@ -27,13 +28,15 @@ void mode_to_string(int mode, char str[]) {
 }
 
 // this function is called for every encountered directory entry
-void process_entry(char *dir_entry_name, char* filename, int indent) {
+void process_entry(char* dir_name, char *dir_entry_name, char* filename, int indent) {
    struct stat info;
    if(stat(dir_entry_name, &info)==-1)
        perror(dir_entry_name);
    else {
        if(S_ISDIR(info.st_mode)) {      // if this directory entry is a subdirectory
            printf("%s\n", dir_entry_name);
+
+           printf("%s/%s/\n", dir_name, dir_entry_name);
            //do_find(dir_entry_name, filename, indent+1);  // explore this subdirectory
        }
        // use strstr() to check if the current directory entry's name matches the substring
@@ -73,7 +76,9 @@ int main(int argc, char* argv[]) {
     } else if (argc == 2) {
         // No directory specified
         //printf("%s", argv[1]);
-        do_find(".", argv[1], 0);
+        char cwd[1024];
+        
+        do_find(getcwd(cwd, sizeof(cwd)), argv[1], 0);
     } else if (argc == 3) {
         // Directory specified
         do_find(argv[2], argv[1], 0);
@@ -81,3 +86,16 @@ int main(int argc, char* argv[]) {
 
    return 0;
 }
+
+/home/seancliff01/CS-355/Lab7/
+      test.txt (0644/-rw-r--r--)
+/home/seancliff01/CS-355/Lab7/test_dir2/
+      test5.txt (0644/-rw-r--r--)
+      test4.txt (0644/-rw-r--r--)
+      test6.txt (0644/-rw-r--r--)
+/home/seancliff01/CS-355/Lab7/test_dir2/test_inner/
+    test7.txt (0644/-rw-r--r--)
+/home/seancliff01/CS-355/Lab7/test_dir/
+      test1.txt (0644/-rw-r--r--)
+      test2.txt (0644/-rw-r--r--)
+      test3.txt (0644/-rw-r--r--)

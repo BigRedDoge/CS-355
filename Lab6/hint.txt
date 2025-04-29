@@ -1,0 +1,2 @@
+track longest file name length
+nested loop where you jump from one position in array to another based on columns
