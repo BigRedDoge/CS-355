@@ -1,17 +1,10 @@
 #include <curses.h>
 #include <stdio.h>
-#include <unistd.h>     // for usleep()
-#include <stdlib.h>     // for atoi()
+#include <unistd.h>     
+#include <stdlib.h>     
 #include "snake.h"
 
-struct snake initializeSnake(int speed);
-void playSnake(struct snake snake, int speed);
-void moveSnake(struct snake *snake, int moveX, int moveY);
-int checkAlive(struct snake snake);
-void drawSnake(struct snake snake);
-void drawFood(struct food food);
-void spawnFood(struct food *food);
-void checkIfEatFood(struct snake *snake, struct food *food);
+
 
 int main(int argc, char *argv[]) {
     int speed=1;            // speed of the animations
@@ -23,22 +16,22 @@ int main(int argc, char *argv[]) {
     noecho();               // do not echo input to the screen
     clear();                // clear the screen
 
-    struct snake snake = initializeSnake(speed);
-
+    struct snake snake = initializeSnake();
     playSnake(snake, speed);
 
+    free(snake.body);
     endwin();                // turn off curses
 }
 
 
-struct snake initializeSnake(int speed) {
+struct snake initializeSnake() {
     struct snake snake;
-    struct body body[100];  // array of body parts
+    //struct body body[100];  // array of body parts
+    snake.body = malloc(sizeof(struct body) * MAX_SNAKE_LENGTH);
 
     snake.length = 1;
     snake.direction = 1;
-    snake.body = body;
-
+    
     snake.body[0].x = (int)(LINES / 2);
     snake.body[0].y = (int)(COLS / 2);
 
@@ -49,14 +42,15 @@ void playSnake(struct snake snake, int speed) {
     int nextMove;
     int newMoveX;
     int newMoveY;
-
+    
     struct food food;
     spawnFood(&food);
 
     // play snake game while alive and not hit quit
     while (1) {
+        clear();
         // draw game
-        drawSnake(snake);
+        //drawSnake(snake);
         drawFood(food);
 
         // move snake
@@ -109,14 +103,15 @@ void playSnake(struct snake snake, int speed) {
         }
         moveSnake(&snake, newMoveX, newMoveY);
 
-        //if (!checkAlive(snake))
-        //    break;
+        if (!checkAlive(snake))
+            break;
 
         checkIfEatFood(&snake, &food);
+        drawSnake(&snake);
 
         // pause the process
         usleep(1000000 / speed);
-        //refresh();
+        refresh();
     }
 
     // game over
@@ -145,9 +140,9 @@ void checkIfEatFood(struct snake *snake, struct food *food) {
     if (snake->body[0].x == food->x && snake->body[0].y == food->y) {
         // eat the food
         snake->length++;
-        for (int i = snake->length - 1; i > 0; i--) {
-            snake->body[i].x = snake->body[i - 1].x;
-            snake->body[i].y = snake->body[i - 1].y;
+        for (int i = snake->length - 1; i >= 0; i--) {
+            snake->body[i + 1].x = snake->body[i].x;
+            snake->body[i + 1].y = snake->body[i].y;
         }
         snake->body[0].x = food->x;
         snake->body[0].y = food->y;
@@ -162,17 +157,17 @@ void drawFood(struct food food) {
     refresh();
 }
 
-void drawSnake(struct snake snake) {
+void drawSnake(struct snake *snake) {
     // draw snake
-    for (int i = 0; i < snake.length; i++) {
-        move(snake.body[i].x, snake.body[i].y);
-        addch('O');
+    for (int i = 0; i < snake->length; i++) {
+        mvaddch(snake->body[i].x, snake->body[i].y, 'O');
     }
     refresh();
 }
 
 void moveSnake(struct snake *snake, int moveX, int moveY) {
     // move snake
+    mvaddch(snake->body[snake->length - 1].x, snake->body[snake->length - 1].y, ' ');
 
     for (int i = snake->length - 1; i > 0; i--) {
         snake->body[i].x = snake->body[i - 1].x;
@@ -180,6 +175,7 @@ void moveSnake(struct snake *snake, int moveX, int moveY) {
     }
     snake->body[0].x = moveX;
     snake->body[0].y = moveY;
+    refresh();
 }
 
 int checkAlive(struct snake snake) {

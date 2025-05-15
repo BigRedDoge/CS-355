@@ -3,6 +3,8 @@
 
 #include <ncurses.h>
 
+#define MAX_SNAKE_LENGTH 100
+
 struct body {
     int x;
     int y;
@@ -21,9 +23,9 @@ struct food {
     int y;
 };
 
-struct snake initializeSnake(int speed);
+struct snake initializeSnake();
 void playSnake(struct snake snake, int speed);
-void drawSnake(struct snake snake);
+void drawSnake(struct snake *snake);
 void drawFood(struct food food);
 void moveSnake(struct snake *snake, int moveX, int moveY);
 void spawnFood(struct food *food);
