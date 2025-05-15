@@ -41,7 +41,6 @@ void bouncy_curses(char* string_to_move);
 
 int main(int argc, char* argv[]) {
     signal(SIGINT, signal_handler);
-    signal(SIGALRM, timer_alarm);
 
     char* filename = argv[1];
     int k = atoi(argv[2]);
